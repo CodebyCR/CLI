@@ -44,6 +44,14 @@ namespace Font {
             + ";" + std::to_string(background.green)
             + ";" + std::to_string(background.blue) + "m" + text;
         }
+
+        auto to_string() -> std::string {
+            return
+            "\033[48;2;" + std::to_string(this->red) + ";"
+            + std::to_string(this->green) + ";"
+            + std::to_string(this->blue) + "m";
+        }
+
     };
 
     constexpr auto RESET_BACKGROUND = "\033[49m";

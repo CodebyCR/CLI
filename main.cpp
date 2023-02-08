@@ -6,6 +6,11 @@
 #include "Font/Foreground.hpp"
 #include "Font/Format.hpp"
 #include "Font/Underline.hpp"
+#include "Font/Color.hpp"
+#include "Font/Gradient.hpp"
+#include <future>
+#include <vector>
+#include <cmath>
 
 auto print_with_pause(const char *text) -> void {
     write(1, text, strlen(text));
@@ -18,7 +23,53 @@ auto erase_last_line() -> void {
     write(1, "\33[2K\r", 5);  // erase line and carriage return
 }
 
+
+//std::future<void> print_with_pause(const std::string& text) {
+//    return std::async(std::launch::async, [text] {
+//        std::cout << text;
+//        std::this_thread::sleep_for(std::chrono::milliseconds(210));
+//    });
+//}
+
+auto from_hex(const std::string& hex_code) {
+    ushort r, g, b;
+    std::stringstream ss;
+    ss << std::hex << hex_code.substr(1, 2);
+    ss >> r;
+    ss.clear();
+    ss << std::hex << hex_code.substr(3, 2);
+    ss >> g;
+    ss.clear();
+    ss << std::hex << hex_code.substr(5, 2);
+    ss >> b;
+
+    RGB rgb{r, g, b };
+
+    return rgb;
+}
+
+auto renderGradient(RGB rgb1, RGB rgb2, int steps) -> std::vector<RGB>  {
+    std::vector<RGB> gradient;
+    float rStep = (rgb2.red - rgb1.red) / (float)steps;
+    float gStep = (rgb2.green - rgb1.green) / (float)steps;
+    float bStep = (rgb2.blue - rgb1.blue) / (float)steps;
+
+    for (int i = 0; i <= steps; i++) {
+        RGB rgb;
+        rgb.red = round(rgb1.red + rStep * i);
+        rgb.green = round(rgb1.green + gStep * i);
+        rgb.blue = round(rgb1.blue + bStep * i);
+        gradient.push_back(rgb);
+    }
+
+    return gradient;
+}
+
+
 auto print_progressbar_1(const int MAX_PROGRESS = 50){
+    auto PURPLE = Color::PURPLE;
+    auto BLUE = Color::NAVY;
+    auto gradient = renderGradient(BLUE, PURPLE, MAX_PROGRESS);
 
     std::string progress;
     std::cout << "Progress 1:" << std::endl;
@@ -28,8 +79,7 @@ auto print_progressbar_1(const int MAX_PROGRESS = 50){
         ushort blue = 250 - red;
         std::stringstream ss;
 
-        ss
-                << Font::Background({.red = red, .green = 0, .blue = blue}) << std::string( i, ' ' )
+        ss      << Font::Background(gradient.at(i)) << std::string( i, ' ' )
                 << Font::Background({.red = 120, .green = 120, .blue = 120}) << std::string( MAX_PROGRESS - i, ' ' )
                 << Font::Format::RESET::ALL;
         progress = ss.str();
@@ -43,9 +93,10 @@ auto print_progressbar_1(const int MAX_PROGRESS = 50){
     std::cout << std::endl;
 }
 
-auto print_progressbar_2(const int MAX_PROGRESS = 50){
+auto print_progressbar_2( Gradient colors = {Color::PURPLE, Color::INDIGO, 50} ,
+                          const int MAX_PROGRESS = 50){
 
-    std::cout << "Progress 2:" << std::endl;
+    std::cout << "\nProgress 2:" << std::endl;
     std::string pending;
     std::string progress;
 
@@ -54,17 +105,13 @@ auto print_progressbar_2(const int MAX_PROGRESS = 50){
         ushort blue = 250 - red;
         std::stringstream ss;
 
-        progress += Font::Background({.red = red, .green = 0, .blue = blue}) + " " + Font::Format::RESET::ALL;
+        progress += Font::Background(colors.at(i)) + " " + Font::Format::RESET::ALL;
 
-        ss      << Font::Background({.red = 120, .green = 120, .blue = 120}) << std::string( MAX_PROGRESS - i, ' ' )
+        ss      << Font::Background(Color::GRAY) << std::string( MAX_PROGRESS - i, ' ' )
                 << Font::Format::RESET::ALL;
         pending = ss.str();
-//        ss.flush();
 
         auto final_progress = progress + pending;
-
-//        auto progress2 = Font::Format::FRAMED + final_progress + RESET;
-
 
         print_with_pause(final_progress.c_str());
         erase_last_line();
@@ -72,11 +119,72 @@ auto print_progressbar_2(const int MAX_PROGRESS = 50){
     std::cout << std::endl;
 }
 
+
+
+
+auto print_progressbar_3( RGB const& left_color = Color::PURPLE,
+                          RGB const& right_color = Color::INDIGO,
+                          const int MAX_PROGRESS = 50){
+
+    const auto gradient = renderGradient(left_color, right_color, MAX_PROGRESS);
+
+    std::cout << "\nProgress 3:" << std::endl;
+    std::string pending;
+    std::string progress;
+
+    const auto fileSize = 227;
+    // fileSize as 100%
+    const auto percent = (double) 100 / fileSize;
+
+
+    ushort max = 0;
+    for (int index = 0; index <= fileSize; index++) {
+        const auto currentPercent = (int)(percent * (index ));
+
+        ushort compare = (ushort)(currentPercent /2);
+
+        if( compare > max || index == 0) {
+            max = compare;
+            auto red = static_cast<ushort>(max * 5);
+            ushort blue = 250 - red;
+            std::stringstream ss;
+
+            progress += Font::Background(gradient.at(max)) + " " + Font::Format::RESET::ALL;
+
+            ss << Font::Background(Color::GRAY) << std::string(MAX_PROGRESS - max, ' ')
+               << Font::Format::RESET::ALL;
+            pending = ss.str();
+        }
+
+        std::string final_progress = progress + pending + ' ' + std::to_string(currentPercent) + "%";
+        print_with_pause(final_progress.c_str());
+        erase_last_line();
+    }
+    std::cout << std::endl;
+}
+
+
 auto main() -> int {
 
-    print_progressbar_1();
 
-    print_progressbar_2();
+    auto PINK = from_hex("#FFC0CB");
+
+    auto GREEN = from_hex("#00FF00");
+    auto YELLOW = from_hex("#FFFF00");
+    auto ORANGE = from_hex("#FFA500");
+
+    for (auto const& current_RGB : renderGradient(GREEN, ORANGE, 50)) {
+        std::cout << Font::Background(current_RGB).to_string() << ' ' << Font::Format::RESET::ALL;
+    }
+
+
+    std::cout << std::endl;
+
+//    print_progressbar_1();
+//
+//    print_progressbar_2();
+
+    print_progressbar_3();
 
 
     std::cout << "Press any key to continue... ";
