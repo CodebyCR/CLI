@@ -11,19 +11,20 @@
 
 struct Gradient : public std::vector<RGB> {
 
-    Gradient(RGB rgb1, RGB rgb2, ushort steps) : std::vector<RGB>(renderGradient(rgb1, rgb2, steps)) {}
+    Gradient(RGB rgb1, RGB rgb2, ushort steps = 50) : std::vector<RGB>(renderGradient(rgb1, rgb2, steps)) {}
 
-    auto renderGradient(RGB rgb1, RGB rgb2, ushort steps) const -> std::vector<RGB>  {
+    [[nodiscard]]
+    static auto renderGradient(RGB rgb1, RGB rgb2, ushort steps) -> std::vector<RGB>  {
         std::vector<RGB> gradient;
-        float rStep = (rgb2.red - rgb1.red) / (float)steps;
-        float gStep = (rgb2.green - rgb1.green) / (float)steps;
-        float bStep = (rgb2.blue - rgb1.blue) / (float)steps;
+        auto rStep = static_cast<float>(rgb2.red - rgb1.red) / steps;
+        auto gStep = static_cast<float>(rgb2.green - rgb1.green) / steps;
+        auto bStep = static_cast<float>(rgb2.blue - rgb1.blue) / steps;
 
         for (int i = 0; i <= steps; i++) {
             RGB rgb;
-            rgb.red = round(rgb1.red + rStep * i);
-            rgb.green = round(rgb1.green + gStep * i);
-            rgb.blue = round(rgb1.blue + bStep * i);
+            rgb.red = static_cast<ushort>(round(rgb1.red +  rStep * i));
+            rgb.green = static_cast<ushort>(round(rgb1.green + gStep * i));
+            rgb.blue = static_cast<ushort>(round(rgb1.blue + bStep * i));
             gradient.push_back(rgb);
         }
 

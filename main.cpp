@@ -1,5 +1,4 @@
 #include <iostream>
-#include <unistd.h>
 #include <sstream>
 #include <string>
 #include "Font/Background.hpp"
@@ -12,16 +11,16 @@
 #include <vector>
 #include <cmath>
 
-auto print_with_pause(const char *text) -> void {
-    write(1, text, strlen(text));
-    usleep(210'000);
-}
-
-auto erase_last_line() -> void {
-    write(1, "\33[2K\r", 5);  // erase line and carriage return
-    write(1, "\33[1A", 4);    // move 1 line up
-    write(1, "\33[2K\r", 5);  // erase line and carriage return
-}
+//auto print_with_pause(const char *text) -> void {
+//    write(1, text, strlen(text));
+//    usleep(210'000);
+//}
+//
+//auto erase_last_line() -> void {
+//    write(1, "\33[2K\r", 5);  // erase line and carriage return
+//    write(1, "\33[1A", 4);    // move 1 line up
+//    write(1, "\33[2K\r", 5);  // erase line and carriage return
+//}
 
 
 //std::future<void> print_with_pause(const std::string& text) {
@@ -31,8 +30,11 @@ auto erase_last_line() -> void {
 //    });
 //}
 
-auto from_hex(const std::string& hex_code) {
-    ushort r, g, b;
+auto from_hex(const std::string_view hex_code) {
+    ushort r;
+    ushort g;
+    ushort b;
+
     std::stringstream ss;
     ss << std::hex << hex_code.substr(1, 2);
     ss >> r;
@@ -87,13 +89,13 @@ auto print_progressbar_1(const int MAX_PROGRESS = 50){
 
         auto progress2 = Font::Format::FRAMED +  progress + Font::Format::RESET::ALL;
 
-        print_with_pause(progress2.c_str());
-        erase_last_line();
+        std::cout << '\r' << progress2 << std::flush;
+        std::this_thread::sleep_for(std::chrono::milliseconds(250));
     }
     std::cout << std::endl;
 }
 
-auto print_progressbar_2( Gradient colors = {Color::PURPLE, Color::INDIGO, 50} ,
+auto print_progressbar_2( Gradient gradient = {Color::PURPLE, Color::INDIGO},
                           const int MAX_PROGRESS = 50){
 
     std::cout << "\nProgress 2:" << std::endl;
@@ -105,7 +107,7 @@ auto print_progressbar_2( Gradient colors = {Color::PURPLE, Color::INDIGO, 50} ,
         ushort blue = 250 - red;
         std::stringstream ss;
 
-        progress += Font::Background(colors.at(i)) + " " + Font::Format::RESET::ALL;
+        progress += Font::Background(gradient.at(i)) + " " + Font::Format::RESET::ALL;
 
         ss      << Font::Background(Color::GRAY) << std::string( MAX_PROGRESS - i, ' ' )
                 << Font::Format::RESET::ALL;
@@ -113,8 +115,8 @@ auto print_progressbar_2( Gradient colors = {Color::PURPLE, Color::INDIGO, 50} ,
 
         auto final_progress = progress + pending;
 
-        print_with_pause(final_progress.c_str());
-        erase_last_line();
+        std::cout << '\r' << final_progress.c_str() << std::flush;
+        std::this_thread::sleep_for(std::chrono::milliseconds(250));
     }
     std::cout << std::endl;
 }
@@ -141,7 +143,7 @@ auto print_progressbar_3( RGB const& left_color = Color::PURPLE,
     for (int index = 0; index <= fileSize; index++) {
         const auto currentPercent = (int)(percent * (index ));
 
-        ushort compare = (ushort)(currentPercent /2);
+        auto compare = static_cast<ushort>(currentPercent /2);
 
         if( compare > max || index == 0) {
             max = compare;
@@ -156,9 +158,9 @@ auto print_progressbar_3( RGB const& left_color = Color::PURPLE,
             pending = ss.str();
         }
 
-        std::string final_progress = progress + pending + ' ' + std::to_string(currentPercent) + "%";
-        print_with_pause(final_progress.c_str());
-        erase_last_line();
+        std::cout << '\r' << progress << pending << ' ' << std::to_string(currentPercent) + '%' << std::flush;
+        std::this_thread::sleep_for(std::chrono::milliseconds(250));
+
     }
     std::cout << std::endl;
 }
@@ -173,16 +175,16 @@ auto main() -> int {
     auto YELLOW = from_hex("#FFFF00");
     auto ORANGE = from_hex("#FFA500");
 
-    for (auto const& current_RGB : renderGradient(GREEN, ORANGE, 50)) {
+    for (auto const& current_RGB : renderGradient(Color::BLUE, Color::INDIGO, 50)) {
         std::cout << Font::Background(current_RGB).to_string() << ' ' << Font::Format::RESET::ALL;
     }
 
 
     std::cout << std::endl;
 
-//    print_progressbar_1();
-//
-//    print_progressbar_2();
+    print_progressbar_1();
+
+    print_progressbar_2();
 
     print_progressbar_3();
 
@@ -207,8 +209,8 @@ auto main() -> int {
         progress2 += ss.str();
         ss.flush();
 
-        print_with_pause(progress2.c_str());
-        erase_last_line();
+        std::cout << '\r' << progress2.c_str() << std::flush;
+        std::this_thread::sleep_for(std::chrono::milliseconds(250));
     }
     std::cout << std::endl;
 
@@ -281,8 +283,8 @@ auto main() -> int {
         progress3 += ss.str();
         ss.flush();
 
-        print_with_pause(progress3.c_str());
-        erase_last_line();
+        std::cout << '\r' << progress2.c_str() << std::flush;
+        std::this_thread::sleep_for(std::chrono::milliseconds(250));
     }
     std::cout << std::endl;
 

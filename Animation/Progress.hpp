@@ -25,7 +25,7 @@ struct ProgressBar {
 
         auto return_void() -> void { /*... */ }
 
-        auto unhandled_exception() -> void {
+        auto unhandled_exception() const -> void {
             std::cout << "unhandled_exception" << std::endl;
         }
 
