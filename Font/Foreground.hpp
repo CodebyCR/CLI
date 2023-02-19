@@ -34,16 +34,29 @@ namespace Font {
         constexpr auto operator<=>(const Foreground &other) const = default;
 
         constexpr friend auto operator<<(std::ostream &os, Foreground const &foreground) -> std::ostream & {
-            os << "\033[38;2;" << foreground.red << ";" << foreground.green << ";" << foreground.blue << "m";
+            os << "\033[38;2;"
+            << foreground.red << ";"
+            << foreground.green << ";"
+            << foreground.blue << "m";
             return os;
         }
 
-        friend auto operator + (Foreground const &foreground)  {
+        friend auto operator + (Foreground const &foreground, char const * const text)  {
             return
-                    "\033[48;2;" + std::to_string(foreground.red)
-                    + ";" + std::to_string(foreground.green)
-                    + ";" + std::to_string(foreground.blue) + "m";
+                    "\033[38;2;"
+                    + std::to_string(foreground.red) + ";"
+                    + std::to_string(foreground.green) + ";"
+                    + std::to_string(foreground.blue) + "m"  + text;
         }
+
+        auto to_string() -> std::string {
+            return
+                    "\033[38;2;"
+                    + std::to_string(this->red) + ";"
+                    + std::to_string(this->green) + ";"
+                    + std::to_string(this->blue) + "m";
+        }
+
     };
 
 

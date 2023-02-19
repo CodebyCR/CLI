@@ -42,4 +42,23 @@ namespace Color{
     constexpr auto INDIGO   = RGB{.red = 57, .green = 73, .blue = 171};
     constexpr auto LIGHT_GRAY = RGB{.red = 228, .green = 228, .blue = 228};
 
+    static auto from_hex(const std::string_view hex_code) {
+        ushort r;
+        ushort g;
+        ushort b;
+
+        std::stringstream ss;
+        ss << std::hex << hex_code.substr(1, 2);
+        ss >> r;
+        ss.clear();
+        ss << std::hex << hex_code.substr(3, 2);
+        ss >> g;
+        ss.clear();
+        ss << std::hex << hex_code.substr(5, 2);
+        ss >> b;
+
+        RGB rgb{r, g, b };
+
+        return rgb;
+    }
 }

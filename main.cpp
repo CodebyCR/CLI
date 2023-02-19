@@ -30,25 +30,7 @@
 //    });
 //}
 
-auto from_hex(const std::string_view hex_code) {
-    ushort r;
-    ushort g;
-    ushort b;
 
-    std::stringstream ss;
-    ss << std::hex << hex_code.substr(1, 2);
-    ss >> r;
-    ss.clear();
-    ss << std::hex << hex_code.substr(3, 2);
-    ss >> g;
-    ss.clear();
-    ss << std::hex << hex_code.substr(5, 2);
-    ss >> b;
-
-    RGB rgb{r, g, b };
-
-    return rgb;
-}
 
 auto renderGradient(RGB rgb1, RGB rgb2, int steps) -> std::vector<RGB>  {
     std::vector<RGB> gradient;
@@ -124,17 +106,14 @@ auto print_progressbar_2( Gradient gradient = {Color::PURPLE, Color::INDIGO},
 
 
 
-auto print_progressbar_3( RGB const& left_color = Color::PURPLE,
-                          RGB const& right_color = Color::INDIGO,
+auto print_progressbar_3( Gradient gradient = {Color::PURPLE, Color::INDIGO},
                           const int MAX_PROGRESS = 50){
-
-    const auto gradient = renderGradient(left_color, right_color, MAX_PROGRESS);
 
     std::cout << "\nProgress 3:" << std::endl;
     std::string pending;
     std::string progress;
 
-    const auto fileSize = 227;
+    const auto fileSize = 50;
     // fileSize as 100%
     const auto percent = (double) 100 / fileSize;
 
@@ -165,19 +144,58 @@ auto print_progressbar_3( RGB const& left_color = Color::PURPLE,
     std::cout << std::endl;
 }
 
+auto print_progressbar_4( Gradient gradient = {Color::INDIGO, Color::DARK_CYAN},
+                          const int MAX_PROGRESS = 50){
+
+    std::cout << "\nProgress 4:" << std::endl;
+    std::string pending;
+    std::string progress;
+
+    const auto fileSize = 50;
+    // fileSize as 100%
+    const auto percent = (double) 100 / fileSize;
+
+    ushort max = 0;
+
+for (int index = 0; index <= fileSize; index++) {
+        const auto currentPercent = static_cast<int>(percent * (index ));
+
+
+    if(auto compare = static_cast<ushort>(currentPercent /2);
+        compare > max || index == 0) {
+
+            max = compare;
+            auto red = static_cast<ushort>(max * 5);
+            ushort blue = 250 - red;
+            std::stringstream ss;
+
+            progress += Font::Foreground(gradient.at(max)) + "—" + Font::Format::RESET::ALL;
+
+
+            ss << Font::Foreground(Color::GRAY) <<  std::string(MAX_PROGRESS - max, ' ')
+               << Font::Format::RESET::ALL;
+            pending = ss.str();
+        }
+
+        std::cout << '\r' << progress << pending << ' ' << std::to_string(currentPercent) + '%' << std::flush;
+        std::this_thread::sleep_for(std::chrono::milliseconds(250));
+
+    }
+    std::cout << std::endl;
+}
+
 
 auto main() -> int {
 
 
-    auto PINK = from_hex("#FFC0CB");
+    auto PINK = Color::from_hex("#FFC0CB");
+    auto GREEN = Color::from_hex("#00FF00");
+    auto YELLOW = Color::from_hex("#FFFF00");
+    auto ORANGE = Color::from_hex("#FFA500");
 
-    auto GREEN = from_hex("#00FF00");
-    auto YELLOW = from_hex("#FFFF00");
-    auto ORANGE = from_hex("#FFA500");
-
-    for (auto const& current_RGB : renderGradient(Color::BLUE, Color::INDIGO, 50)) {
-        std::cout << Font::Background(current_RGB).to_string() << ' ' << Font::Format::RESET::ALL;
-    }
+//    for (auto const& current_RGB : renderGradient(Color::BLUE, Color::INDIGO, 50)) {
+//        std::cout << Font::Background(current_RGB) << ' ' << Font::Format::RESET::ALL;
+//    }
 
 
     std::cout << std::endl;
@@ -187,6 +205,8 @@ auto main() -> int {
     print_progressbar_2();
 
     print_progressbar_3();
+
+    print_progressbar_4();
 
 
     std::cout << "Press any key to continue... ";
