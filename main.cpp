@@ -1,20 +1,23 @@
 #include <iostream>
-#include <sstream>
-#include <string>
 #include "Font/Background.hpp"
 #include "Font/Foreground.hpp"
 #include "Font/Format.hpp"
 #include "Font/Underline.hpp"
 #include "Font/Color.hpp"
 #include "Font/Gradient.hpp"
-#include <future>
 #include <vector>
-#include <cmath>
 #include "Animation/Progress.hpp"
 
 
 
-auto main() -> int {
+auto main(int argc, char* argv[]) -> int {
+
+    const auto args = std::vector<std::string>(argv, argv + argc);
+
+    std::cout << "\nArguments:" << std::endl;
+    for (auto const &arg : args) {
+        std::cout << arg << std::endl;
+    }
 
 
     auto PINK = Color::from_hex("#FFC0CB");
