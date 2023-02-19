@@ -5,6 +5,7 @@
 #pragma once
 
 #include <iostream>
+#include <sstream>
 #include "RGB.hpp"
 
 namespace Color{
