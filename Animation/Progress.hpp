@@ -78,8 +78,6 @@ namespace Progress {
         std::string progress;
 
         for (ushort i = 0; i <= MAX_PROGRESS; i++) {
-            auto red = static_cast<ushort>(i * 5);
-            ushort blue = 250 - red;
             std::stringstream ss;
 
             progress += Font::Background(gradient.at(i)) + " " + Font::Format::RESET::ALL;
@@ -116,8 +114,6 @@ namespace Progress {
 
             if (compare > max || index == 0) {
                 max = compare;
-                auto red = static_cast<ushort>(max * 5);
-                ushort blue = 250 - red;
                 std::stringstream ss;
 
                 progress += Font::Background(gradient.at(max)) + " " + Font::Format::RESET::ALL;
@@ -142,7 +138,8 @@ namespace Progress {
         std::string pending;
         std::string progress;
 
-        const auto fileSize = 50;
+
+        const auto fileSize = 500;
         // fileSize as 100%
         const auto percent = (double) 100 / fileSize;
 
@@ -152,12 +149,10 @@ namespace Progress {
             const auto currentPercent = static_cast<int>(percent * (index));
 
 
-            if (auto compare = static_cast<ushort>(currentPercent / 2);
+            if (const auto compare = static_cast<ushort>(currentPercent / 2);
                     compare > max || index == 0) {
 
                 max = compare;
-                auto red = static_cast<ushort>(max * 5);
-                ushort blue = 250 - red;
                 std::stringstream ss;
 
                 progress += Font::Foreground(gradient.at(max)) + "—" + Font::Format::RESET::ALL;
@@ -169,7 +164,7 @@ namespace Progress {
             }
 
             std::cout << '\r' << progress << pending << ' ' << std::to_string(currentPercent) << '%' << std::flush;
-            std::this_thread::sleep_for(std::chrono::milliseconds(250));
+            std::this_thread::sleep_for(std::chrono::milliseconds(7));
 
         }
         std::cout << std::endl;
