@@ -7,8 +7,36 @@
 #include "Font/Gradient.hpp"
 #include <vector>
 #include "Animation/Progress.hpp"
+#include <iomanip>
+#include <filesystem>
 
 
+enum class ColorEnum : std::int32_t {
+    PINK = 0xFFC0CB,
+    GREEN = 0x00FF00,
+    ORANGE = 0xFFA500,
+    YELLOW = 0xFFFF00,
+    PURPLE = 0x800080,
+    BLUE = 0x0000FF,
+    RED = 0xFF0000,
+    BLACK = 0x000000,
+    WHITE = 0xFFFFFF,
+    GRAY = 0x808080,
+    BROWN = 0xA52A2A,
+    LIME = 0x00FF00,
+
+};
+
+
+
+auto enum_to_rgb(ColorEnum color) -> RGB {
+    auto ss = std::stringstream();
+    ss << '#' << std::hex << std::setw(6) << std::setfill('0') << static_cast<std::int32_t>(color);
+    const std::string result = ss.str();
+    ss.flush();
+
+    return Color::from_hex(result);
+}
 
 auto main(int argc, char* argv[]) -> int {
 
@@ -18,6 +46,14 @@ auto main(int argc, char* argv[]) -> int {
     for (auto const &arg : args) {
         std::cout << arg << std::endl;
     }
+
+    const auto path = std::filesystem::path("/Users/christoph_rohde/Documents");
+    const auto iter = std::filesystem::recursive_directory_iterator(
+            path, std::filesystem::directory_options::skip_permission_denied);
+
+    const auto files = std::vector<std::filesystem::path>(begin(iter), end(iter));
+
+    auto result = enum_to_rgb(ColorEnum::BLUE);
 
 
     auto PINK = Color::from_hex("#FFC0CB");
@@ -32,7 +68,7 @@ auto main(int argc, char* argv[]) -> int {
 //
 //    Progress::print_progressbar_2();
 
-    Progress::print_progressbar_3({YELLOW, GREEN});
+    Progress::print_progressbar_3({result, Color::CYAN});
 
     Progress::print_progressbar_4();
 
