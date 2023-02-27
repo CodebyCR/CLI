@@ -20,7 +20,7 @@ struct Gradient : public std::vector<RGB> {
         auto gStep = static_cast<float>(rgb2.green - rgb1.green) / steps;
         auto bStep = static_cast<float>(rgb2.blue - rgb1.blue) / steps;
 
-        for (int i = 0; i <= steps; i++) {
+        for (ushort i = 0; i <= steps; i++) {
             RGB rgb;
             rgb.red = static_cast<ushort>(round(rgb1.red +  rStep * i));
             rgb.green = static_cast<ushort>(round(rgb1.green + gStep * i));
