@@ -16,9 +16,9 @@ struct Gradient : public std::vector<RGB> {
     [[nodiscard]]
     static auto renderGradient(RGB rgb1, RGB rgb2, ushort steps) -> std::vector<RGB>  {
         std::vector<RGB> gradient;
-        auto rStep = static_cast<float>(rgb2.red - rgb1.red) / steps;
-        auto gStep = static_cast<float>(rgb2.green - rgb1.green) / steps;
-        auto bStep = static_cast<float>(rgb2.blue - rgb1.blue) / steps;
+        const auto rStep = static_cast<float>(rgb2.red - rgb1.red) / steps;
+        const auto gStep = static_cast<float>(rgb2.green - rgb1.green) / steps;
+        const auto bStep = static_cast<float>(rgb2.blue - rgb1.blue) / steps;
 
         for (ushort i = 0; i <= steps; i++) {
             RGB rgb;
