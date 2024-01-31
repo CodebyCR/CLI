@@ -8,7 +8,7 @@
 #include <vector>
 #include "Animation/Progress.hpp"
 #include <iomanip>
-#include <filesystem>
+
 
 
 enum class ColorEnum : std::int32_t {
@@ -28,7 +28,6 @@ enum class ColorEnum : std::int32_t {
 };
 
 
-
 auto enum_to_rgb(ColorEnum color) -> RGB {
     auto ss = std::stringstream();
     ss << '#' << std::hex << std::setw(6) << std::setfill('0') << static_cast<std::int32_t>(color);
@@ -38,20 +37,29 @@ auto enum_to_rgb(ColorEnum color) -> RGB {
     return Color::from_hex(result);
 }
 
-auto main(int argc, char* argv[]) -> int {
+auto main(int argc, char *argv[]) -> int {
 
     const auto args = std::vector<std::string>(argv, argv + argc);
 
     std::cout << "\nArguments:" << std::endl;
-    for (auto const &arg : args) {
+    for (auto const &arg: args) {
         std::cout << arg << std::endl;
     }
 
-    const auto path = std::filesystem::path("/Users/christoph_rohde/Documents");
-    const auto iter = std::filesystem::recursive_directory_iterator(
-            path, std::filesystem::directory_options::skip_permission_denied);
-
-    const auto files = std::vector<std::filesystem::path>(begin(iter), end(iter));
+//    const auto path = std::filesystem::path("/Users/christoph_rohde/Downloads");
+//    const auto iter = std::filesystem::recursive_directory_iterator(
+//            path, std::filesystem::directory_options::skip_permission_denied);
+//
+//    const auto files = std::vector<std::filesystem::path>(begin(iter), end(iter));
+//
+//    auto extension_set = std::set<std::string, std::less<>>();
+//    for (auto const &entry: files) {
+//        extension_set.emplace(entry.extension());
+//    }
+//
+//    for (auto const &set_entry: extension_set) {
+//        std::cout << set_entry << std::endl;
+//    }
 
     auto result = enum_to_rgb(ColorEnum::BLUE);
 
@@ -68,7 +76,7 @@ auto main(int argc, char* argv[]) -> int {
 //
 //    Progress::print_progressbar_2();
 
-    Progress::print_progressbar_3({result, Color::CYAN});
+    Progress::print_progressbar_3({result, Color::DRIP_PURPLE});
 
     Progress::print_progressbar_4();
 
@@ -84,9 +92,9 @@ auto main(int argc, char* argv[]) -> int {
     std::cout << "Progress:" << std::endl;
     std::string progress2;
 
-    for (ushort i = 0; i <= MAX_PROGRESS; i++) {
-        auto red = static_cast<ushort>(i * 5);
-        ushort blue = 250 - red;
+    for (std::uint8_t i = 0; i <= MAX_PROGRESS; i++) {
+        auto red = static_cast<std::uint8_t>(i * 5);
+        std::uint8_t blue = 250 - red;
         std::stringstream ss;
 
         ss << Font::Foreground({.red = red, .green = 0, .blue = blue}) << 'A' << RESET;
@@ -101,66 +109,66 @@ auto main(int argc, char* argv[]) -> int {
 
     std::cout << "Reset only Foreground color:" << std::endl;
     std::cout << Font::Foreground({})
-                << Font::Background({.red=122, .green=122, .blue=122})
-                << "This is an example text." << Font::RESET_FOREGROUND
-                << "This is an example text." << RESET << std::endl;
+              << Font::Background({.red=122, .green=122, .blue=122})
+              << "This is an example text." << Font::RESET_FOREGROUND
+              << "This is an example text." << RESET << std::endl;
 
     std::cout << "Reset only Background color:" << std::endl;
     std::cout << Font::Foreground({})
-                << Font::Background({.red=122, .green=122, .blue=122})
-                << "This is an example text." << Font::RESET_BACKGROUND
-                << "This is an example text." << RESET << std::endl;
+              << Font::Background({.red=122, .green=122, .blue=122})
+              << "This is an example text." << Font::RESET_BACKGROUND
+              << "This is an example text." << RESET << std::endl;
 
 
     std::cout << "Lorem ipsum dolor sit amet, consectetur adipiscing elit."
                  "Donec auctor, nisl eget ultricies luctus, nisl nisl aliquam nisl,"
                  " eget aliquam nisl nisl sit amet nisl. "
                  "Donec auctor, nisl eget ultricies luctus, nisl nisl aliquam nisl, "
-                 << Font::Format::BOLD <<"\n" <<
-                 "eget aliquam nisl nisl sit amet nisl. Donec auctor, nisl eget ultricies luctus, "
-                 << Font::Format::ITALIC <<"\n" <<
-                 "nisl nisl aliquam nisl, eget aliquam nisl nisl sit amet nisl. Donec auctor, "
-                    << Font::Format::UNDERLINED <<"\n" <<
-                 "nisl eget ultricies luctus, nisl nisl aliquam nisl, eget aliquam nisl nisl sit amet nisl. "
-                    << Font::Format::BLINK <<"\n" <<
-                 "Donec auctor, nisl eget ultricies luctus, nisl nisl aliquam nisl, "
-                    << Font::Format::INVERTED <<"\n" <<
-                 "eget aliquam nisl nisl sit amet nisl. Donec auctor, nisl eget ultricies luctus, "
-                    << Font::Format::STRIKETHROUGH <<"\n" <<
-                 "nisl nisl aliquam nisl, eget aliquam nisl nisl sit amet nisl. Donec auctor, "
-                 "nisl eget ultricies luctus, nisl nisl aliquam nisl, eget aliquam nisl nisl sit amet nisl. "
-                 << Font::Format::RESET::BOLD <<"\n" <<
-                 "Donec auctor, nisl eget ultricies luctus, nisl nisl aliquam nisl, "
-                    << Font::Format::RESET::ITALIC <<"\n" <<
-                 "eget aliquam nisl nisl sit amet nisl. "
-                    << Font::Format::RESET::UNDERLINED <<"\n" <<
-                 "Donec auctor, nisl eget ultricies luctus, nisl nisl aliquam nisl, "
-                    << Font::Format::RESET::BLINK << "\n" <<
-                 "eget aliquam nisl nisl sit amet nisl. "
-                    << Font::Format::RESET::INVERTED <<"\n" <<
-                 "Donec auctor, nisl eget ultricies luctus, nisl nisl aliquam nisl, "
-                    << Font::Format::RESET::STRIKETHROUGH <<"\n" <<
-                 "eget aliquam nisl nisl sit amet nisl. Donec auctor, nisl eget ultricies luctus, "
-                  << Font::Format::OVERLINE <<"\n" <<
-                 "nisl nisl aliquam nisl, eget aliquam nisl nisl sit amet nisl. Donec auctor, "
-                  << Font::Format::FRAMED <<"\n" <<
-                 "nisl eget ultricies luctus, nisl nisl aliquam nisl, eget aliquam nisl nisl sit amet nisl. "
-                    << Font::Format::ENCIRCLED <<"\n" <<
-                 "Donec auctor, nisl eget ultricies luctus, "
-                    << Font::Format::RESET::OVERLINE <<"\n" <<
-                 "nisl nisl aliquam nisl, eget aliquam nisl nisl sit amet nisl. Donec auctor, "
-                    << Font::Format::RESET::FRAMED <<"\n" <<
-                 "nisl eget ultricies luctus, nisl nisl aliquam nisl, eget aliquam nisl nisl sit amet nisl. "
-                    << Font::Format::RESET::ENCIRCLED <<"\n" <<
-                 "Done" << std::endl;
+              << Font::Format::BOLD << "\n" <<
+              "eget aliquam nisl nisl sit amet nisl. Donec auctor, nisl eget ultricies luctus, "
+              << Font::Format::ITALIC << "\n" <<
+              "nisl nisl aliquam nisl, eget aliquam nisl nisl sit amet nisl. Donec auctor, "
+              << Font::Format::UNDERLINED << "\n" <<
+              "nisl eget ultricies luctus, nisl nisl aliquam nisl, eget aliquam nisl nisl sit amet nisl. "
+              << Font::Format::BLINK << "\n" <<
+              "Donec auctor, nisl eget ultricies luctus, nisl nisl aliquam nisl, "
+              << Font::Format::INVERTED << "\n" <<
+              "eget aliquam nisl nisl sit amet nisl. Donec auctor, nisl eget ultricies luctus, "
+              << Font::Format::STRIKETHROUGH << "\n" <<
+              "nisl nisl aliquam nisl, eget aliquam nisl nisl sit amet nisl. Donec auctor, "
+              "nisl eget ultricies luctus, nisl nisl aliquam nisl, eget aliquam nisl nisl sit amet nisl. "
+              << Font::Format::RESET::BOLD << "\n" <<
+              "Donec auctor, nisl eget ultricies luctus, nisl nisl aliquam nisl, "
+              << Font::Format::RESET::ITALIC << "\n" <<
+              "eget aliquam nisl nisl sit amet nisl. "
+              << Font::Format::RESET::UNDERLINED << "\n" <<
+              "Donec auctor, nisl eget ultricies luctus, nisl nisl aliquam nisl, "
+              << Font::Format::RESET::BLINK << "\n" <<
+              "eget aliquam nisl nisl sit amet nisl. "
+              << Font::Format::RESET::INVERTED << "\n" <<
+              "Donec auctor, nisl eget ultricies luctus, nisl nisl aliquam nisl, "
+              << Font::Format::RESET::STRIKETHROUGH << "\n" <<
+              "eget aliquam nisl nisl sit amet nisl. Donec auctor, nisl eget ultricies luctus, "
+              << Font::Format::OVERLINE << "\n" <<
+              "nisl nisl aliquam nisl, eget aliquam nisl nisl sit amet nisl. Donec auctor, "
+              << Font::Format::FRAMED << "\n" <<
+              "nisl eget ultricies luctus, nisl nisl aliquam nisl, eget aliquam nisl nisl sit amet nisl. "
+              << Font::Format::ENCIRCLED << "\n" <<
+              "Donec auctor, nisl eget ultricies luctus, "
+              << Font::Format::RESET::OVERLINE << "\n" <<
+              "nisl nisl aliquam nisl, eget aliquam nisl nisl sit amet nisl. Donec auctor, "
+              << Font::Format::RESET::FRAMED << "\n" <<
+              "nisl eget ultricies luctus, nisl nisl aliquam nisl, eget aliquam nisl nisl sit amet nisl. "
+              << Font::Format::RESET::ENCIRCLED << "\n" <<
+              "Done" << std::endl;
 
 
     std::cout << "\nProgress:" << std::endl;
     std::string progress3;
 
-    for (ushort i = 0; i <= MAX_PROGRESS; i++) {
-        auto red = static_cast<ushort>(i * 5);
-        ushort blue = 250 - red;
+    for (std::uint8_t i = 0; i <= MAX_PROGRESS; i++) {
+        auto red = static_cast<std::uint8_t>(i * 5);
+        std::uint8_t blue = 250 - red;
         std::stringstream ss;
 
         ss << Font::Underline({.red = red, .green = 0, .blue = blue}) << 'A' << RESET;

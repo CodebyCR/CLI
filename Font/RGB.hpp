@@ -7,7 +7,7 @@
 #include <locale>
 
 struct RGB {
-    ushort red = 0;
-    ushort green = 0;
-    ushort blue = 0;
+    std::uint8_t red = 0;
+    std::uint8_t green = 0;
+    std::uint8_t blue = 0;
 };

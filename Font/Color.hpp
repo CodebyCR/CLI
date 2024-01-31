@@ -42,11 +42,14 @@ namespace Color{
     constexpr auto LIGHT_RED= RGB{.red = 255, .green = 128, .blue = 128 };
     constexpr auto INDIGO   = RGB{.red = 57, .green = 73, .blue = 171};
     constexpr auto LIGHT_GRAY = RGB{.red = 228, .green = 228, .blue = 228};
+    constexpr auto DRIP_PURPLE = RGB{.red = 80, .green = 80, .blue = 210};
+    constexpr auto LIGHT_PURPLE = RGB{.red = 150, .green = 150, .blue = 255};
+    constexpr auto DARK_PURPLE = RGB{.red = 50, .green = 50, .blue = 150};
 
     static auto from_hex(const std::string_view hex_code) {
-        ushort r;
-        ushort g;
-        ushort b;
+        std::uint8_t r;
+        std::uint8_t g;
+        std::uint8_t b;
 
         std::stringstream ss;
         ss << std::hex << hex_code.substr(1, 2);
