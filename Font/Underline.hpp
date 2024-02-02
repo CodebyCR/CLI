@@ -12,9 +12,9 @@ namespace Font {
     class Underline {
 
     private:
-        ushort red;
-        ushort green;
-        ushort blue;
+        std::uint8_t red;
+        std::uint8_t green;
+        std::uint8_t blue;
 
     public:
 

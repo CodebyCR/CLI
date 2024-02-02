@@ -11,7 +11,7 @@ project("CLI" VERSION ${PROJECT_VERSION} LANGUAGES CXX)
 
 message(NOTICE "${PROJECT_NAME}: ${PROJECT_VERSION}")
 
-set(SUB_LIB_COUNT 2)
+set(SUB_LIB_COUNT 3)
 
 # Add Font library
 set(FONT_LIBRARY "Font" )
@@ -28,6 +28,14 @@ if (ANIMATION_LIBRARY)
     message(NOTICE " - [2/${SUB_LIB_COUNT}] ${ANIMATION_LIBRARY} found")
 else()
     message(FATAL_ERROR " - [2/${SUB_LIB_COUNT}] ${ANIMATION_LIBRARY} not found")
+endif()
+
+set(CONSOLE_LIBRARY "Console" )
+add_subdirectory(${CONSOLE_LIBRARY})
+if (CONSOLE_LIBRARY)
+    message(NOTICE " - [3/${SUB_LIB_COUNT}] ${CONSOLE_LIBRARY} found")
+else()
+    message(FATAL_ERROR " - [3/${SUB_LIB_COUNT}] ${CONSOLE_LIBRARY} not found")
 endif()
 
 # Create new library variable

@@ -5,16 +5,18 @@
 #pragma once
 
 #include <iostream>
+#include <sstream>
 #include "RGB.hpp"
 
 namespace Font {
+    constexpr auto RESET_FOREGROUND = "\033[39m";
 
     class Foreground {
 
     private:
-        ushort red;
-        ushort green;
-        ushort blue;
+        std::uint8_t red;
+        std::uint8_t green;
+        std::uint8_t blue;
 
     public:
 
@@ -35,13 +37,14 @@ namespace Font {
 
         constexpr friend auto operator<<(std::ostream &os, Foreground const &foreground) -> std::ostream & {
             os << "\033[38;2;"
-            << foreground.red << ";"
-            << foreground.green << ";"
-            << foreground.blue << "m";
+            << (foreground.red ? foreground.red : 0) << ";"
+            << (foreground.green ? foreground.green : 0) << ";"
+            << (foreground.blue ? foreground.blue : 0) << "m";
             return os;
         }
 
         friend auto operator + (Foreground const &foreground, char const * const text)  {
+//            printf(" Red: %d, Green: %d, Blue: %d\n", foreground.red, foreground.green, foreground.blue);
             return
                     "\033[38;2;"
                     + std::to_string(foreground.red) + ";"
@@ -50,6 +53,7 @@ namespace Font {
         }
 
         auto to_string() -> std::string {
+//            printf(" Red: %d, Green: %d, Blue: %d\n", this->red, this->green, this->blue);
             return
                     "\033[38;2;"
                     + std::to_string(this->red) + ";"
@@ -57,8 +61,20 @@ namespace Font {
                     + std::to_string(this->blue) + "m";
         }
 
+
+
+
+
     };
 
+    auto static print_as_line(std::vector<RGB> const& gradient) -> std::string {
+        auto ss = std::stringstream();
 
-    constexpr auto RESET_FOREGROUND = "\033[39m";
+        for (auto const& color : gradient) {
+            ss << Foreground(color) << "—";
+        }
+        ss << Font::RESET_FOREGROUND << std::endl;
+        return ss.str();
+    }
+
 }

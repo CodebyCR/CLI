@@ -14,52 +14,24 @@
 #include "../Font/Color.hpp"
 #include "../Font/Gradient.hpp"
 #include "../Font/Format.hpp"
-//#include <experimental/coroutine>
 
-//struct ProgressBar {
-//    struct promise_type {
-//        uint index;
-//
-//        auto initial_suspend() ->  std::experimental::suspend_always{ /*... */ return{};}
-//
-//        auto final_suspend() noexcept -> std::experimental::suspend_always{ /*... */ return{};}
-//
-//        auto get_return_object() -> ProgressBar { /*... */ }
-//
-//        auto yield_value(int value) -> std::experimental::suspend_always {
-//            index = value;
-//            return{};
-//        }
-//
-//        auto return_void() -> void { /*... */ }
-//
-//        auto unhandled_exception() const -> void {
-//            std::cout << "unhandled_exception" << std::endl;
-//        }
-//
-//
-//    };
-//};
 
 namespace Progress {
 
-    auto print_progressbar_1(const int MAX_PROGRESS = 50) {
+    auto print_progressbar_1(const std::uint8_t MAX_PROGRESS = 50) {
         auto PURPLE = Color::PURPLE;
         auto BLUE = Color::NAVY;
         auto gradient = Gradient(BLUE, PURPLE, MAX_PROGRESS);
 
-        std::string progress;
         std::cout << "Progress 1:" << std::endl;
 
-        for (ushort i = 0; i <= MAX_PROGRESS; i++) {
-            auto red = static_cast<ushort>(i * 5);
-            ushort blue = 250 - red;
+        for (std::uint8_t i = 0; i <= MAX_PROGRESS; i++) {
             std::stringstream ss;
 
             ss << Font::Background(gradient.at(i)) << std::string(i, ' ')
                << Font::Background({.red = 120, .green = 120, .blue = 120}) << std::string(MAX_PROGRESS - i, ' ')
                << Font::Format::RESET::ALL;
-            progress = ss.str();
+            std::string progress = ss.str();
             ss.flush();
 
             auto progress2 = Font::Format::FRAMED + progress + Font::Format::RESET::ALL;
@@ -74,17 +46,17 @@ namespace Progress {
                              const int MAX_PROGRESS = 50) {
 
         std::cout << "\nProgress 2:" << std::endl;
-        std::string pending;
+
         std::string progress;
 
-        for (ushort i = 0; i <= MAX_PROGRESS; i++) {
+        for (std::uint8_t i = 0; i <= MAX_PROGRESS; i++) {
             std::stringstream ss;
 
             progress += Font::Background(gradient.at(i)) + " " + Font::Format::RESET::ALL;
 
             ss << Font::Background(Color::GRAY) << std::string(MAX_PROGRESS - i, ' ')
                << Font::Format::RESET::ALL;
-            pending = ss.str();
+            std::string pending = ss.str();
             ss.flush();
 
             std::cout << '\r' << progress << pending << std::flush;
@@ -94,8 +66,8 @@ namespace Progress {
     }
 
 
-    auto print_progressbar_3(Gradient gradient = {Color::PURPLE, Color::INDIGO},
-                             const int MAX_PROGRESS = 50) {
+    auto print_progressbar_3(Gradient const& gradient = {Color::PURPLE, Color::INDIGO},
+                             const std::uint8_t MAX_PROGRESS = 50) {
 
         std::cout << "\nProgress 3:" << std::endl;
         std::string pending;
@@ -106,11 +78,11 @@ namespace Progress {
         const auto percent = (double) 100 / fileSize;
 
 
-        ushort max = 0;
+        std::uint8_t max = 0;
         for (int index = 0; index <= fileSize; index++) {
             const auto currentPercent = (int) (percent * index);
 
-            auto compare = static_cast<ushort>(currentPercent / 2);
+            auto compare = static_cast<std::uint8_t>(currentPercent / 2);
 
             if (compare > max || index == 0) {
                 max = compare;
@@ -131,8 +103,8 @@ namespace Progress {
         std::cout << std::endl;
     }
 
-    auto print_progressbar_4(Gradient gradient = {Color::INDIGO, Color::DARK_CYAN},
-                             const int MAX_PROGRESS = 50) {
+    auto print_progressbar_4(Gradient const& gradient = {Color::INDIGO, Color::DARK_CYAN},
+                             const std::uint8_t MAX_PROGRESS = 50) {
 
         std::cout << "\nProgress 4:" << std::endl;
         std::string pending;
@@ -143,13 +115,13 @@ namespace Progress {
         // fileSize as 100%
         const auto percent = (double) 100 / fileSize;
 
-        ushort max = 0;
+        std::uint8_t max = 0;
 
         for (int index = 0; index <= fileSize; index++) {
-            const auto currentPercent = static_cast<int>(percent * (index));
+            const auto currentPercent = static_cast<int>(percent * index);
 
 
-            if (const auto compare = static_cast<ushort>(currentPercent / 2);
+            if (const auto compare = static_cast<std::uint8_t>(currentPercent / 2);
                     compare > max || index == 0) {
 
                 max = compare;
@@ -164,7 +136,7 @@ namespace Progress {
             }
 
             std::cout << '\r' << progress << pending << ' ' << std::to_string(currentPercent) << '%' << std::flush;
-            std::this_thread::sleep_for(std::chrono::milliseconds(7));
+            std::this_thread::sleep_for(std::chrono::milliseconds(20));
 
         }
         std::cout << std::endl;

@@ -1,13 +1,18 @@
-#include <iostream>
 #include "Font/Background.hpp"
 #include "Font/Foreground.hpp"
 #include "Font/Format.hpp"
 #include "Font/Underline.hpp"
 #include "Font/Color.hpp"
 #include "Font/Gradient.hpp"
-#include <vector>
 #include "Animation/Progress.hpp"
-#include <iomanip>
+#include "Console/Commands.hpp"
+#include "Console/CommandHandler.hpp"
+
+#include <iostream>
+#include <vector>
+#include <filesystem>
+#include <map>
+
 
 
 
@@ -24,29 +29,37 @@ enum class ColorEnum : std::int32_t {
     GRAY = 0x808080,
     BROWN = 0xA52A2A,
     LIME = 0x00FF00,
-
 };
 
 
-auto enum_to_rgb(ColorEnum color) -> RGB {
-    auto ss = std::stringstream();
-    ss << '#' << std::hex << std::setw(6) << std::setfill('0') << static_cast<std::int32_t>(color);
-    const std::string result = ss.str();
-    ss.flush();
 
-    return Color::from_hex(result);
+auto enum_to_rgb(ColorEnum color) -> RGB {
+    return Color::from_hex(static_cast<std::int32_t>(color));
 }
+
 
 auto main(int argc, char *argv[]) -> int {
 
     const auto args = std::vector<std::string>(argv, argv + argc);
+    CommandHandler commandHandler(args);
+    commandHandler.execute_args();
 
-    std::cout << "\nArguments:" << std::endl;
-    for (auto const &arg: args) {
-        std::cout << arg << std::endl;
-    }
+    return 0;
 
-//    const auto path = std::filesystem::path("/Users/christoph_rohde/Downloads");
+//    process_args(args);
+
+//    CLI::map_to_command(args);
+
+    // example cli usage:
+    // ./cli --hex 0,255,0      -> #00FF00
+    // ./cli --rgb #00FF00      -> 0,255,0
+    // ./cli --help             -> print help
+    // ./cli --version          -> print brand
+    // ./cli --show 0,255,0     -> 0,255,0 (and color in terminal)
+    // ./cli -sr #00FF00        -> 0,255,0 (and color in terminal)
+
+
+    //    const auto path = std::filesystem::path("/Users/christoph_rohde/Downloads");
 //    const auto iter = std::filesystem::recursive_directory_iterator(
 //            path, std::filesystem::directory_options::skip_permission_denied);
 //
@@ -61,22 +74,24 @@ auto main(int argc, char *argv[]) -> int {
 //        std::cout << set_entry << std::endl;
 //    }
 
-    auto result = enum_to_rgb(ColorEnum::BLUE);
+    auto lime = enum_to_rgb(ColorEnum::BLUE);
 
 
-    auto PINK = Color::from_hex("#FFC0CB");
-    auto GREEN = Color::from_hex("#00FF00");
-    auto YELLOW = Color::from_hex("#FFFF00");
-    auto ORANGE = Color::from_hex("#FFA500");
+//    auto PINK   = Color::from_hex("#FFC0CB");
+//    auto GREEN  = Color::from_hex("#00FF00");
+//    auto YELLOW = Color::from_hex("#FFFF00");
+//    auto ORANGE = Color::from_hex("#FFA500");
 
-
-    std::cout << std::endl;
 
 //    Progress::print_progressbar_1();
 //
 //    Progress::print_progressbar_2();
 
-    Progress::print_progressbar_3({result, Color::DRIP_PURPLE});
+//    Progress::print_progressbar_3({Color::WHITE, Color::BLACK});
+//
+//    Progress::print_progressbar_3({Color::BLACK, Color::WHITE});
+
+//    Progress::print_progressbar_3({lime, Color::DRIP_PURPLE});
 
     Progress::print_progressbar_4();
 
@@ -94,7 +109,7 @@ auto main(int argc, char *argv[]) -> int {
 
     for (std::uint8_t i = 0; i <= MAX_PROGRESS; i++) {
         auto red = static_cast<std::uint8_t>(i * 5);
-        std::uint8_t blue = 250 - red;
+        std::uint8_t blue = 255 - red;
         std::stringstream ss;
 
         ss << Font::Foreground({.red = red, .green = 0, .blue = blue}) << 'A' << RESET;
@@ -182,3 +197,5 @@ auto main(int argc, char *argv[]) -> int {
 
     return 0;
 }
+
+

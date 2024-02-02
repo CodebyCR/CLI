@@ -4,8 +4,6 @@
 
 #pragma once
 
-#include <locale>
-
 struct RGB {
     std::uint8_t red = 0;
     std::uint8_t green = 0;
