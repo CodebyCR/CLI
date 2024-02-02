@@ -46,23 +46,64 @@ namespace Color{
     constexpr auto LIGHT_PURPLE = RGB{.red = 150, .green = 150, .blue = 255};
     constexpr auto DARK_PURPLE = RGB{.red = 50, .green = 50, .blue = 150};
 
-    static auto from_hex(const std::string_view hex_code) {
-        std::uint8_t r;
-        std::uint8_t g;
-        std::uint8_t b;
+
+    [[nodiscard]]
+    constexpr static auto from_hex(const std::uint32_t hex) -> RGB {
+        auto r = static_cast<std::uint8_t>((hex & 0xFF0000) >> 16);
+        auto g = static_cast<std::uint8_t>((hex & 0x00FF00) >> 8);
+        auto b = static_cast<std::uint8_t>(hex & 0x0000FF);
+
+        return RGB{r, g, b};
+    }
+
+    [[nodiscard]]
+    [[nodiscard]]
+    static auto from_hex(std::string_view hex_code) -> RGB{
+        std::uint32_t hex;
+        std::stringstream ss;
+
+        if (hex_code[0] == '#') {
+            ss << std::hex << hex_code.substr(1);
+        } else {
+            ss << std::hex << hex_code;
+        }
+        ss >> hex;
+
+        return from_hex(hex);
+    }
+
+    [[nodiscard]]
+    static auto from_rgb(std::string_view rgb) -> RGB {
+        // rgb format:
+        // 250,255,70
+        // 3,255,0
 
         std::stringstream ss;
-        ss << std::hex << hex_code.substr(1, 2);
-        ss >> r;
-        ss.clear();
-        ss << std::hex << hex_code.substr(3, 2);
-        ss >> g;
-        ss.clear();
-        ss << std::hex << hex_code.substr(5, 2);
-        ss >> b;
+        ss << rgb;
 
-        RGB rgb{r, g, b };
+        std::uint32_t r, g, b;
+        char c;
+        ss >> r >> c >> g >> c >> b;
 
-        return rgb;
+        return RGB{static_cast<std::uint8_t>(r), static_cast<std::uint8_t>(g), static_cast<std::uint8_t>(b)};
     }
+
+    [[nodiscard]]
+    static auto to_num(const RGB &rgb) -> std::uint32_t {
+        return (rgb.red << 16) | (rgb.green << 8) | rgb.blue;
+    }
+
+    [[nodiscard]]
+    static auto to_hex(const RGB &rgb) -> std::string {
+        std::stringstream ss;
+        ss << std::hex << to_num(rgb);
+        return ss.str();
+    }
+
+    [[nodiscard]]
+    static auto to_rgb(const RGB &rgb) -> std::string {
+        return std::to_string(rgb.red) + ", " + std::to_string(rgb.green) + ", " + std::to_string(rgb.blue);
+    }
+
+
 }
