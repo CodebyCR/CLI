@@ -1,6 +1,7 @@
 
 set(FONT_SOURCES
         "RGB.hpp"
+        "RGBA.hpp"
         "Format.hpp"
         "Foreground.hpp"
         "Background.hpp"
