@@ -7,6 +7,7 @@
 #include <iostream>
 #include <sstream>
 #include "RGB.hpp"
+#include "RGBA.hpp"
 
 namespace Color{
 
@@ -45,6 +46,7 @@ namespace Color{
     constexpr auto DRIP_PURPLE = RGB{.red = 80, .green = 80, .blue = 210};
     constexpr auto LIGHT_PURPLE = RGB{.red = 150, .green = 150, .blue = 255};
     constexpr auto DARK_PURPLE = RGB{.red = 50, .green = 50, .blue = 150};
+    constexpr auto INDIGO_SPACE = RGB{.red = 50, .green =70, .blue = 133};
 
 
     [[nodiscard]]
@@ -103,6 +105,78 @@ namespace Color{
     [[nodiscard]]
     static auto to_rgb(const RGB &rgb) -> std::string {
         return std::to_string(rgb.red) + ", " + std::to_string(rgb.green) + ", " + std::to_string(rgb.blue);
+    }
+
+    /// Brither color
+    [[nodiscard]]
+    static auto brighter(const RGB &rgb) -> RGB {
+        return RGB{
+                static_cast<std::uint8_t>(rgb.red + 32),
+                static_cast<std::uint8_t>(rgb.green + 32),
+                static_cast<std::uint8_t>(rgb.blue + 32)
+        };
+    }
+
+    /// Darker color
+    [[nodiscard]]
+    static auto darker(const RGB &rgb) -> RGB {
+        return RGB{
+                static_cast<std::uint8_t>(rgb.red - 32),
+                static_cast<std::uint8_t>(rgb.green - 32),
+                static_cast<std::uint8_t>(rgb.blue - 32)
+        };
+    }
+
+    /// Invert color
+    [[nodiscard]]
+    static auto invert(const RGB &rgb) -> RGB {
+        return RGB{
+                static_cast<std::uint8_t>(255 - rgb.red),
+                static_cast<std::uint8_t>(255 - rgb.green),
+                static_cast<std::uint8_t>(255 - rgb.blue)
+        };
+    }
+
+    /// Mix two colors (maybe with | operator)
+    [[nodiscard]]
+    static auto mix(const RGB &a, const RGB &b) -> RGB {
+        return RGB{
+                static_cast<std::uint8_t>((a.red + b.red) / 2),
+                static_cast<std::uint8_t>((a.green + b.green) / 2),
+                static_cast<std::uint8_t>((a.blue + b.blue) / 2)
+        };
+    }
+
+    /// Interpolate two colors
+    [[nodiscard]]
+    static auto interpolate(const RGB &a, const RGB &b, float t) -> RGB {
+        return RGB{
+                static_cast<std::uint8_t>(a.red + (b.red - a.red) * t),
+                static_cast<std::uint8_t>(a.green + (b.green - a.green) * t),
+                static_cast<std::uint8_t>(a.blue + (b.blue - a.blue) * t)
+        };
+    }
+
+    /// Convert to grayscale
+    [[nodiscard]]
+    static auto to_grayscale(const RGB &rgb) -> RGB {
+        auto gray = static_cast<std::uint8_t>((rgb.red + rgb.green + rgb.blue) / 3);
+        return RGB{gray, gray, gray};
+    }
+
+    /// Convert to sepia
+    [[nodiscard]]
+    static auto to_sepia(const RGB &rgb) -> RGB {
+        auto r = static_cast<std::uint8_t>(rgb.red * 0.393 + rgb.green * 0.769 + rgb.blue * 0.189);
+        auto g = static_cast<std::uint8_t>(rgb.red * 0.349 + rgb.green * 0.686 + rgb.blue * 0.168);
+        auto b = static_cast<std::uint8_t>(rgb.red * 0.272 + rgb.green * 0.534 + rgb.blue * 0.131);
+        return RGB{r, g, b};
+    }
+
+    /// to RGBA
+    [[nodiscard]]
+    static auto to_rgba(const RGB &rgb, std::uint8_t alpha) -> RGBA {
+        return RGBA{rgb.red, rgb.green, rgb.blue, alpha};
     }
 
 
