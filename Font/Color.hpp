@@ -22,6 +22,9 @@ namespace Color{
     constexpr auto GRAY = RGB{128, 128, 128};
     constexpr auto PINK = RGB{255, 192, 203};
     constexpr auto ORANGE = RGB{255, 165, 0};
+    constexpr auto GOLD = RGB{255, 215, 0};
+    constexpr auto SILVER = RGB{192, 192, 192};
+    constexpr auto FRESH_ORANGE = RGB{.red = 255, .green = 102, .blue = 77};
     constexpr auto BROWN = RGB{165, 42, 42};
     constexpr auto PURPLE = RGB{128, 0, 128};
     constexpr auto LIME = RGB{0, 255, 0};
@@ -29,7 +32,6 @@ namespace Color{
     constexpr auto OLIVE = RGB{128, 128, 0};
     constexpr auto NAVY = RGB{0, 0, 128};
     constexpr auto TEAL = RGB{0, 128, 128};
-    constexpr auto SILVER = RGB{192, 192, 192};
     constexpr auto AQUA = RGB{0, 255, 255};
     constexpr auto FUCHSIA = RGB{255, 0, 255};
     constexpr auto LAVENDER = RGB{230, 230, 250};
@@ -46,7 +48,7 @@ namespace Color{
     constexpr auto DRIP_PURPLE = RGB{.red = 80, .green = 80, .blue = 210};
     constexpr auto LIGHT_PURPLE = RGB{.red = 150, .green = 150, .blue = 255};
     constexpr auto DARK_PURPLE = RGB{.red = 50, .green = 50, .blue = 150};
-    constexpr auto INDIGO_SPACE = RGB{.red = 50, .green =70, .blue = 133};
+    constexpr auto SPACE_INDIGO = RGB{.red = 50, .green =70, .blue = 133};
 
 
     [[nodiscard]]
@@ -83,11 +85,13 @@ namespace Color{
         std::stringstream ss;
         ss << rgb;
 
-        std::uint32_t r, g, b;
+        std::uint32_t red;
+        std::uint32_t green;
+        std::uint32_t b;
         char c;
-        ss >> r >> c >> g >> c >> b;
+        ss >> red >> c >> green >> c >> b;
 
-        return RGB{static_cast<std::uint8_t>(r), static_cast<std::uint8_t>(g), static_cast<std::uint8_t>(b)};
+        return RGB{static_cast<std::uint8_t>(red), static_cast<std::uint8_t>(green), static_cast<std::uint8_t>(b)};
     }
 
     [[nodiscard]]
@@ -109,21 +113,29 @@ namespace Color{
 
     /// Brither color
     [[nodiscard]]
-    static auto brighter(const RGB &rgb) -> RGB {
+    static auto brighter(const RGB &rgb, std::uint8_t times = 1) -> RGB {
+        const auto rawRed = rgb.red + 32 * times;
+        const auto rawGreen = rgb.green + 32 * times;
+        const auto rawBlue = rgb.blue + 32 * times;
+
         return RGB{
-                static_cast<std::uint8_t>(rgb.red + 32),
-                static_cast<std::uint8_t>(rgb.green + 32),
-                static_cast<std::uint8_t>(rgb.blue + 32)
+                static_cast<std::uint8_t>(rawRed > 255 ? 255 : rawRed),
+                static_cast<std::uint8_t>(rawGreen > 255 ? 255 : rawGreen),
+                static_cast<std::uint8_t>(rawBlue > 255 ? 255 : rawBlue)
         };
     }
 
     /// Darker color
     [[nodiscard]]
     static auto darker(const RGB &rgb) -> RGB {
+        const auto rawRed = rgb.red - 32;
+        const auto rawGreen = rgb.green - 32;
+        const auto rawBlue = rgb.blue - 32;
+
         return RGB{
-                static_cast<std::uint8_t>(rgb.red - 32),
-                static_cast<std::uint8_t>(rgb.green - 32),
-                static_cast<std::uint8_t>(rgb.blue - 32)
+                static_cast<std::uint8_t>(rawRed < 0 ? 0 : rawRed),
+                static_cast<std::uint8_t>(rawGreen < 0 ? 0 : rawGreen),
+                static_cast<std::uint8_t>(rawBlue < 0 ? 0 : rawBlue)
         };
     }
 
