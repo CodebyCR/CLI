@@ -4,6 +4,7 @@
 #include "Font/Underline.hpp"
 #include "Font/Color.hpp"
 #include "Font/Gradient.hpp"
+#include "Font/MultiGradient.hpp"
 #include "Animation/Progress.hpp"
 #include "Console/Commands.hpp"
 #include "Console/CommandHandler.hpp"
@@ -37,12 +38,26 @@ auto enum_to_rgb(ColorEnum color) -> RGB {
     return Color::from_hex(static_cast<std::int32_t>(color));
 }
 
+auto gradientColor() -> void {
+    auto rainbowColors = std::vector<RGB>{Color::RED,    Color::ORANGE,
+                                          Color::YELLOW, Color::GREEN,
+                                          Color::BLUE,   Color::PURPLE};
+
+    for(auto const& [color, symbol] : MultiGradient::colorize_text("Hello World from C++", rainbowColors)) {
+        std::cout << Font::Foreground(Color::brighter(color, 2)) << symbol << Font::Format::RESET::ALL;
+    }
+}
 
 auto main(int argc, char *argv[]) -> int {
 
     const auto args = std::vector<std::string>(argv, argv + argc);
     CommandHandler commandHandler(args);
     commandHandler.execute_args();
+
+//    auto colorVector = std::vector<RGB>{Color::RED, Color::GREEN, Color::BLUE, Color::YELLOW, Color::ORANGE, Color::PINK};
+//    auto gradient = MultiGradient(colorVector, 50);
+
+
 
     return 0;
 
