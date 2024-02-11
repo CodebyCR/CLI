@@ -124,7 +124,6 @@ namespace CLI {
                 {"-s10b",     Commands::TO_DEC_AND_SHOW_VERBOSE},
                 {"-b10s",     Commands::TO_DEC_AND_SHOW_VERBOSE},
 
-
         };
 
         Commands totalCommand = Commands::EXIT;
