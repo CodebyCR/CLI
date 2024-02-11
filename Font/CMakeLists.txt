@@ -7,7 +7,9 @@ set(FONT_SOURCES
         "Background.hpp"
         "Underline.hpp"
         "Color.hpp"
-        "Gradient.hpp")
+        "Gradient.hpp"
+        "MultiGradient.hpp"
+)
 
 add_library(${FONT_LIBRARY} INTERFACE ${FONT_SOURCES} )
 
