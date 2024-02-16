@@ -15,8 +15,6 @@
 #include <map>
 
 
-
-
 enum class ColorEnum : std::int32_t {
     PINK = 0xFFC0CB,
     GREEN = 0x00FF00,
@@ -31,7 +29,6 @@ enum class ColorEnum : std::int32_t {
     BROWN = 0xA52A2A,
     LIME = 0x00FF00,
 };
-
 
 
 auto enum_to_rgb(ColorEnum color) -> RGB {
