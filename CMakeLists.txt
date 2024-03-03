@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.24)
 set(CMAKE_CXX_STANDARD 20)
 
 set(PROJECT_VERSION_MAJOR 0)
-set(PROJECT_VERSION_MINOR 1)
+set(PROJECT_VERSION_MINOR 9)
 set(PROJECT_VERSION_PATCH 0)
 set(PROJECT_VERSION ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}.${PROJECT_VERSION_PATCH})
 
@@ -30,12 +30,18 @@ else()
     message(FATAL_ERROR " - [2/${SUB_LIB_COUNT}] ${ANIMATION_LIBRARY} not found")
 endif()
 
-set(CONSOLE_LIBRARY "Console" )
-add_subdirectory(${CONSOLE_LIBRARY})
-if (CONSOLE_LIBRARY)
-    message(NOTICE " - [3/${SUB_LIB_COUNT}] ${CONSOLE_LIBRARY} found")
+
+
+# Add Command library
+set(COMMAND_LINER "./extern/Command-Liner")
+message(NOTICE "COMMAND_LIBRARY: ${COMMAND_LINER}")
+#set(COMMAND_LIBRARY "/extern/Command-Liner/src")
+add_subdirectory(${COMMAND_LINER})
+set(COMMAND_LINER_LIB "${COMMAND_LINER}/src")
+if (COMMAND_LINER_LIB)
+    message(NOTICE " - [3/${SUB_LIB_COUNT}] ${COMMAND_LINER_LIB} found")
 else()
-    message(FATAL_ERROR " - [3/${SUB_LIB_COUNT}] ${CONSOLE_LIBRARY} not found")
+    message(FATAL_ERROR " - [3/${SUB_LIB_COUNT}] ${COMMAND_LINER_LIB} not found")
 endif()
 
 # Create new library variable

@@ -1,0 +1,3 @@
+[submodule "Command-Liner"]
+    path = extern/Command-Liner
+    url = https://github.com/CodebyCR/Command-Liner.git
