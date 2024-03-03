@@ -6,14 +6,42 @@
 #include "Font/Gradient.hpp"
 #include "Font/MultiGradient.hpp"
 #include "Animation/Progress.hpp"
-#include "Console/Commands.hpp"
-#include "Console/CommandHandler.hpp"
+
 
 #include <iostream>
 #include <vector>
-#include <filesystem>
-#include <map>
+#include "extern/Command-Liner/src/CommandHandler.hpp"
+#include "extern/Command-Liner/src/Option.hpp"
+#include "extern/Command-Liner/src/ReservedOptions.hpp"
 
+namespace OptionIds {
+
+    constexpr std::uint64_t TO_HEX_ID {0x0000'1001};
+    constexpr std::uint64_t TO_RGB_ID {0x0010'0001};
+    constexpr std::uint64_t SHOW {0x0000'0101};
+//    EXIT    = 0000'0000,
+//    HELP    = 0000'0001,
+//    VERBOSE = 0000'0010,
+//    VERSION = 0000'0011,
+//    SHOW    = 0000'0101,
+//    TO_HEX  = 0000'1001,
+//    TO_DEC  = 0001'0001,
+//    TO_RGB  = 0010'0001,
+//
+//    /// Combined commands
+//    TO_HEX_AND_SHOW = 0000'1101,
+//    TO_DEC_AND_SHOW = 0001'0101,
+//    TO_RGB_AND_SHOW = 0010'0101,
+//
+//    /// With verbose
+//    TO_HEX_AND_VERBOSE = 0000'1011,
+//    TO_DEC_AND_VERBOSE = 0001'0011,
+//    TO_RGB_AND_VERBOSE = 0010'0011,
+//
+//    TO_HEX_AND_SHOW_VERBOSE = 0000'1111,
+//    TO_DEC_AND_SHOW_VERBOSE = 0001'0111,
+//    TO_RGB_AND_SHOW_VERBOSE = 0010'0111
+};
 
 enum class ColorEnum : std::int32_t {
     PINK = 0xFFC0CB,
@@ -45,14 +73,142 @@ auto gradientColor() -> void {
     }
 }
 
+static auto print_brand() -> std::string {
+    constexpr auto brand =  "    CLI Tools • since 2023 •\n"
+                            "    Version: 0.8.0\n"
+                            "    All rights reserved.\n"
+                            "    Copyright © 2024. Christoph Rohde\n"
+                            "    Licence: MIT";
+
+    const auto brandGradient = Gradient(Color::DRIP_PURPLE, Color::CYAN, 75);
+
+    std::stringstream ss;
+    ss
+            << Font::print_as_line(brandGradient)
+            << Font::Foreground(Color::LIGHT_PURPLE) << brand << Font::RESET_FOREGROUND << std::endl
+            << Font::print_as_line(brandGradient);
+    return ss.str();
+}
+
+
 auto main(int argc, char *argv[]) -> int {
 
     const auto args = std::vector<std::string>(argv, argv + argc);
+
+    Option versionOption{
+        .id = ReservedOptions::VERSION_ID,
+        .verboseName = "--version",
+        .quickName = "-v",
+        .description = "Prints the version of the program.",
+        .function = []([[maybe_unused]]std::vector<std::string> const& args) {
+            std::cout << print_brand() << std::endl;
+        }
+    };
+
+    Option toHexOption{
+        .id = OptionIds::TO_HEX_ID,
+        .verboseName = "--hex",
+        .quickName = "-x",
+        .description = "Converts a RGB color to a hex color.",
+        .function = [](std::vector<std::string> const& args) {
+            for(auto const& arg : args){
+                const auto color = Color::from_rgb(arg);
+                std::cout << arg << " -> Hex: #" << Color::to_hex(color) << std::endl;
+            }
+        }
+    };
+
+    Option toRgbOption{
+        .id = OptionIds::TO_RGB_ID,
+        .verboseName = "--rgb",
+        .quickName = "-r",
+        .description = "Converts a hex color to a RGB color.",
+        .function = [](std::vector<std::string> const& args) {
+            for(auto const& arg : args){
+                const auto color = Color::from_hex(arg);
+                std::cout << arg << " -> RGB: " << Color::to_rgb(color) << std::endl;
+            }
+        }
+    };
+
+    Option showOption{
+        .id = OptionIds::SHOW,
+        .verboseName = "--show",
+        .quickName = "-s",
+        .description = "Shows a color in the terminal.",
+        .function = [](std::vector<std::string> const& args) {
+            for(auto const& arg : args){
+                const auto color = Color::from_rgb(arg);
+                std::cout << arg << " -> " << Font::print_as_block({color}) << std::endl;
+            }
+        }
+    };
+
+    Option toHexAndShowOption{
+        .id = OptionIds::TO_HEX_ID | OptionIds::SHOW,
+        .verboseName = "--hex-and-show",
+        .quickName = "-xs",
+        .description = "Converts a RGB color to a hex color and shows it in the terminal.",
+        .function = [](std::vector<std::string> const& args) {
+            for(auto const& arg : args){
+                const auto color = Color::from_rgb(arg);
+                const std::vector<RGB> gradient{color, color, color};
+
+                std::cout << "RGB: " << arg
+                          << " -> Hex: #" << Color::to_hex(color) << ' '
+                          << Font::print_as_block(gradient) << std::endl;
+            }
+
+        }
+    };
+
+    Option toRgbAndShowOption{
+        .id = OptionIds::TO_RGB_ID | OptionIds::SHOW,
+        .verboseName = "--rgb-and-show",
+        .quickName = "-rs",
+        .description = "Converts a hex color to a RGB color and shows it in the terminal.",
+        .function = [](std::vector<std::string> const& args) {
+            for(auto const& arg : args){
+                const auto color = Color::from_hex(arg);
+                const std::vector<RGB> gradient{color, color, color};
+
+                std::cout << "Hex: " << arg << " -> RGB: "
+                          << Color::to_rgb(color) << ' '
+                          << Font::print_as_block(gradient) << std::endl;
+            }
+        }
+    };
+
     CommandHandler commandHandler(args);
-    commandHandler.execute_args();
+    commandHandler.add(versionOption);
+    commandHandler.add(toHexOption);
+    commandHandler.add(toRgbOption);
+    commandHandler.add(showOption);
+    commandHandler.add(toHexAndShowOption);
+    commandHandler.add(toRgbAndShowOption);
+    commandHandler.execute();
 
 //    auto colorVector = std::vector<RGB>{Color::RED, Color::GREEN, Color::BLUE, Color::YELLOW, Color::ORANGE, Color::PINK};
 //    auto gradient = MultiGradient(colorVector, 50);
+
+
+    // CommandHandler commandHandler(argv, argv + argc);
+    // commandHandler.add(helpCommand);
+    // commandHandler.addManual("The Manual of the program."
+    //                          "This is a very long description about the program."
+    //                          "This is a very long description about the program.");
+    // commandHandler.execute_args();
+
+    // predefined commands (vielleicht letztes byte einnehmen)
+    // --exit       -> 0
+    // --help       -> 1
+    // --manual     -> 2
+    // --version    -> 3
+    // --verbose    -> 4
+
+
+
+
 
 
 
